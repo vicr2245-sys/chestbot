@@ -317,7 +317,16 @@
     </div>
     <div class="price-amount">$10<sub>/once</sub></div>
     <!-- Replace href with your Lemon Squeezy checkout URL -->
-    <a href="https://forgecopy.lemonsqueezy.com/checkout/buy/88106c18-2988-4de3-ab38-4f657ba31c96" class="btn btn-primary">Get ChestBot &rarr;</a>
+    <button onclick="handleCheckout()" class="btn btn-primary">Get ChestBot &rarr;</button>
+
+  <script>
+    async function handleCheckout() {
+      const res = await fetch("/api/checkout", { method: "POST" });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else alert("Something went wrong. Please try again.");
+    }
+  </script>
   </div>
 
 </main>
