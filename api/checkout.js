@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `https://chestbot.vercel.app/thank-you`,
+      success_url: `https://chestbot.vercel.app/thank-you.html`,
       cancel_url: `https://chestbot.vercel.app`,
     });
 
