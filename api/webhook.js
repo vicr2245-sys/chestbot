@@ -18,7 +18,7 @@ async function sendLicenseEmail(email, key) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "ChestBot <chestbot.support@gmail.com>",
+      from: "ChestBot <onboarding@resend.dev>",
       to: email,
       subject: "Your ChestBot License Key",
       html: `
