@@ -129,11 +129,13 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: "Missing Stripe signature" });
   }
 
-  // Vercel gives us the raw body as a Buffer when we disable body parsing
-  const rawBody =
-    typeof req.body === "string"
-      ? req.body
-      : JSON.stringify(req.body);
+  // Read raw body from stream — required for Stripe signature verification
+  const rawBody = await new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    req.on("error", reject);
+  });
 
   if (!verifyStripeSignature(rawBody, signature)) {
     return res.status(400).json({ error: "Invalid signature" });
