@@ -64,18 +64,22 @@ function sendEmail(to, key) {
             <code style="font-size: 15px; letter-spacing: 1px; color: #111;">${key}</code>
           </div>
 
-          <div style="text-align: center; margin: 24px 0;">
-            <a href="${DOWNLOAD_URL}"
-               style="background: #111; color: #fff; padding: 12px 28px; border-radius: 6px;
-                      text-decoration: none; font-size: 15px; display: inline-block;">
-              ⬇️ Download ChestBot
-            </a>
-          </div>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
+            <tr>
+              <td align="center">
+                <a href="${DOWNLOAD_URL}"
+                   style="background:#111;color:#fff;padding:12px 28px;border-radius:6px;
+                          text-decoration:none;font-size:15px;font-weight:bold;
+                          display:inline-block;">
+                  Download ChestBot
+                </a>
+              </td>
+            </tr>
+          </table>
 
           <p style="color: #555; font-size: 13px;">
             The zip contains the app, setup guide, and README. Your license key is tied
-            to your machine on first use. If you ever need help, reply to this email and
-            we'll sort it out.
+            to your machine on first use. If you need help, contact our support email.
           </p>
 
           <p style="color: #555;">— ChestBot</p>
