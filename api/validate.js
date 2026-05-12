@@ -31,6 +31,13 @@ module.exports = async (req, res) => {
     .slice(0, 4)
     .toUpperCase();
 
+  console.log("Key received:", key);
+  console.log("Parts:", parts);
+  console.log("Data:", data);
+  console.log("Sig received:", sig);
+  console.log("Expected sig:", expected);
+  console.log("SECRET exists:", !!process.env.LICENSE_SECRET);
+
   if (sig === expected) {
     return res.status(200).json({ valid: true });
   } else {
