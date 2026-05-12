@@ -1,11 +1,16 @@
 const crypto = require("crypto");
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { key } = req.body || {};
+  let body = req.body;
+  if (typeof body === "string") {
+    try { body = JSON.parse(body); } catch { body = {}; }
+  }
+
+  const key = body?.key;
 
   if (!key) {
     return res.status(400).json({ valid: false, error: "No key provided" });
