@@ -38,7 +38,7 @@ async function sendLicenseEmail(email, key) {
           </div>
           <p style="color:#666;">Enter this key when ChestBot asks on first launch.</p>
           <div style="margin:24px 0;">
-            <a href="https://drive.google.com/file/d/144ZTuW9deYuQDpDvPy6sG1mGHNvFA71g/view?usp=drive_link"
+            <a href="https://drive.google.com/file/d/1-P6p1HDV2zv4xHsNBDFV4733_F8cewdQ/view?usp=sharing"
                style="display:inline-block;background:#FF2D55;color:#fff;padding:12px 24px;border-radius:50px;text-decoration:none;font-weight:600;">
               Download ChestBot &rarr;
             </a>
