@@ -1,177 +1,99 @@
-// api/stripe-webhook.js
-// Listens for Stripe payment events, generates a license key, and emails it to the customer.
-
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const crypto = require("crypto");
-const https = require("https");
 
-const LICENSE_SECRET = process.env.LICENSE_SECRET;
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = process.env.RESEND_FROM || "licenses@chestbot.app";
-const PREFIX = "CB";
-const DOWNLOAD_URL = "https://github.com/vicr2245-sys/chestbot/releases/download/v1.0.0/ChestBot.zip";
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function generateKey() {
-  const nonce = crypto.randomBytes(16).toString("hex");
+function generateLicenseKey() {
+  const random = crypto.randomBytes(12).toString("hex").toUpperCase();
+  const parts = [
+    random.slice(0, 4),
+    random.slice(4, 8),
+    random.slice(8, 12),
+  ];
+  const data = parts.join("-");
   const sig = crypto
-    .createHmac("sha256", LICENSE_SECRET)
-    .update(nonce)
+    .createHmac("sha256", process.env.LICENSE_SECRET)
+    .update(data)
     .digest("hex")
-    .slice(0, 32);
-  return `${PREFIX}-${nonce}.${sig}`;
+    .slice(0, 4)
+    .toUpperCase();
+  return `${data}-${sig}`;
 }
 
-function verifyStripeSignature(rawBody, signature) {
-  const parts = Object.fromEntries(
-    signature.split(",").map((p) => p.split("="))
-  );
-  const timestamp = parts["t"];
-  const provided = parts["v1"];
-
-  const payload = `${timestamp}.${rawBody}`;
-  const expected = crypto
-    .createHmac("sha256", STRIPE_WEBHOOK_SECRET)
-    .update(payload)
-    .digest("hex");
-
-  // Reject if timestamp is older than 5 minutes (replay protection)
-  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
-
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(expected, "utf8"),
-      Buffer.from(provided, "utf8")
-    );
-  } catch {
-    return false;
-  }
-}
-
-function sendEmail(to, key) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify({
-      from: FROM_EMAIL,
-      to,
+async function sendLicenseEmail(email, key) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: "ChestBot <onboarding@resend.dev>",
+      to: email,
       subject: "Your ChestBot License Key",
       html: `
-        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 32px;">
-          <h2 style="margin-bottom: 8px;">Thanks for purchasing ChestBot! 🎉</h2>
-          <p style="color: #555;">Here's your license key. You'll be asked to enter it the first time you launch the app.</p>
-
-          <div style="background: #f4f4f4; border-radius: 8px; padding: 16px 24px; margin: 24px 0; text-align: center;">
-            <code style="font-size: 15px; letter-spacing: 1px; color: #111;">${key}</code>
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px;">
+          <h2 style="margin-bottom:8px;">You're all set.</h2>
+          <p style="color:#666;">Thanks for purchasing ChestBot. Here is your license key:</p>
+          <div style="background:#f4f4f4;border-radius:8px;padding:20px;margin:24px 0;text-align:center;font-size:22px;font-family:monospace;letter-spacing:2px;font-weight:bold;">
+            ${key}
           </div>
-
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
-            <tr>
-              <td align="center">
-                <a href="${DOWNLOAD_URL}"
-                   style="background:#111;color:#fff;padding:12px 28px;border-radius:6px;
-                          text-decoration:none;font-size:15px;font-weight:bold;
-                          display:inline-block;">
-                  Download ChestBot
-                </a>
-              </td>
-            </tr>
-          </table>
-
-          <p style="color: #555; font-size: 13px;">
-            The zip contains the app, setup guide, and README. Your license key is tied
-            to your machine on first use. If you need help, contact our support email.
+          <p style="color:#666;">Enter this key when ChestBot asks on first launch.</p>
+          <div style="margin:24px 0;">
+            <a href="https://drive.google.com/file/d/144ZTuW9deYuQDpDvPy6sG1mGHNvFA71g/view?usp=drive_link"
+               style="display:inline-block;background:#FF2D55;color:#fff;padding:12px 24px;border-radius:50px;text-decoration:none;font-weight:600;">
+              Download ChestBot &rarr;
+            </a>
+          </div>
+          <hr style="border:none;border-top:1px solid #eee;margin:24px 0;" />
+          <p style="color:#666;font-size:13px;">
+            Need help? Contact us at chestbot.support@gmail.com
           </p>
-
-          <p style="color: #555;">— ChestBot</p>
         </div>
       `,
-    });
-
-    const req = https.request(
-      {
-        hostname: "api.resend.com",
-        path: "/emails",
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
-          "Content-Type": "application/json",
-          "Content-Length": Buffer.byteLength(body),
-        },
-      },
-      (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            resolve(JSON.parse(data));
-          } else {
-            reject(new Error(`Resend error ${res.statusCode}: ${data}`));
-          }
-        });
-      }
-    );
-
-    req.on("error", reject);
-    req.write(body);
-    req.end();
+    }),
   });
+  return res.ok;
 }
 
-// ── Handler ───────────────────────────────────────────────────────────────────
-
-module.exports = async function handler(req, res) {
+module.exports = async (req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).end();
   }
 
-  const signature = req.headers["stripe-signature"];
-  if (!signature) {
-    return res.status(400).json({ error: "Missing Stripe signature" });
-  }
-
-  // Read raw body from stream — required for Stripe signature verification
-  const rawBody = await new Promise((resolve, reject) => {
-    const chunks = [];
-    req.on("data", (chunk) => chunks.push(chunk));
-    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
-    req.on("error", reject);
-  });
-
-  if (!verifyStripeSignature(rawBody, signature)) {
-    return res.status(400).json({ error: "Invalid signature" });
-  }
-
-  const event = JSON.parse(rawBody);
-
-  // Only act on completed payments
-  if (event.type !== "checkout.session.completed") {
-    return res.status(200).json({ received: true });
-  }
-
-  const session = event.data.object;
-  const email = session?.customer_details?.email || session?.customer_email;
-
-  if (!email) {
-    console.error("No customer email found in session:", session.id);
-    return res.status(200).json({ received: true });
-  }
-
-  const key = generateKey();
+  const sig = req.headers["stripe-signature"];
+  let event;
 
   try {
-    await sendEmail(email, key);
-    console.log(`License key sent to ${email}`);
+    const rawBody = await new Promise((resolve, reject) => {
+      let data = "";
+      req.on("data", chunk => data += chunk);
+      req.on("end", () => resolve(data));
+      req.on("error", reject);
+    });
+
+    event = stripe.webhooks.constructEvent(
+      rawBody,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (err) {
-    console.error("Failed to send email:", err.message);
-    // Still return 200 so Stripe doesn't retry — log and handle manually if needed
+    console.error("Webhook signature error:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  return res.status(200).json({ received: true });
-};
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    const email = session.customer_details?.email;
 
-// Tell Vercel not to parse the body — Stripe needs the raw bytes to verify the signature
-module.exports.config = {
-  api: {
-    bodyParser: false,
-  },
+    if (email) {
+      const licenseKey = generateLicenseKey();
+      const sent = await sendLicenseEmail(email, licenseKey);
+      if (!sent) {
+        console.error("Failed to send license email to:", email);
+        return res.status(500).json({ error: "Failed to send email" });
+      }
+      console.log(`License key sent to ${email}: ${licenseKey}`);
+    }
+  }
+
+  res.status(200).json({ received: true });
 };
