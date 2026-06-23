@@ -15,8 +15,8 @@ module.exports = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `https://chestbot.vercel.app/thank-you.html`,
-      cancel_url: `https://chestbot.vercel.app`,
+      success_url: `https://getchestbot.com/thank-you.html`,
+      cancel_url: `https://getchestbot.com`,
     });
 
     res.status(200).json({ url: session.url });
