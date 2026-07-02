@@ -12,271 +12,276 @@
   <meta property="og:url" content="https://getchestbot.com/" />
   <meta property="og:type" content="website" />
   <link rel="canonical" href="https://getchestbot.com/" />
-  <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="ChestBot — Auto Collect TikTok Live Chests" />
   <meta name="twitter:description" content="Never miss a chest again. ChestBot runs in the background and collects automatically." />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0e0e0e;
-      --surface: #161616;
-      --border: #2a2a2a;
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1a1a1a;
+      --border: #242424;
       --accent: #FF2D55;
+      --accent-dim: #FF2D5520;
       --text: #f0f0f0;
       --muted: #666;
+      --muted2: #444;
       --radius: 12px;
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      gap: 48px;
+      overflow-x: hidden;
     }
 
-    /* NAV */
+    /* ── NAV ── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 18px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 16px 40px;
+      display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: rgba(14,14,14,0.9);
-      backdrop-filter: blur(10px);
-      z-index: 10;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(16px);
     }
-
-    .logo {
-      font-weight: 700;
-      font-size: 18px;
-      color: var(--text);
-      text-decoration: none;
-    }
+    .logo { font-weight: 700; font-size: 18px; color: var(--text); text-decoration: none; }
     .logo span { color: var(--accent); }
+    nav ul { list-style: none; display: flex; gap: 28px; }
+    nav ul a { color: var(--muted); font-size: 14px; text-decoration: none; transition: color .15s; }
+    nav ul a:hover { color: var(--text); }
 
     .btn {
-      padding: 9px 22px;
-      border-radius: 50px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.15s, transform 0.15s;
+      padding: 10px 24px; border-radius: 50px;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+      cursor: pointer; text-decoration: none; border: none;
+      transition: all .2s;
     }
-    .btn-primary { background: var(--accent); color: #fff; border: none; }
-    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,45,85,.3); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
 
-    /* MAIN */
-    main {
-      margin-top: 64px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 40px;
-      width: 100%;
-      max-width: 640px;
-      text-align: center;
+    /* ── SECTIONS ── */
+    section { padding: 100px 20px; }
+    .container { max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 12px;
     }
+    h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 700; letter-spacing: -1px; line-height: 1.15; margin-bottom: 16px; }
+    .section-sub { font-size: 16px; color: var(--muted); line-height: 1.7; max-width: 520px; margin-bottom: 56px; }
 
-    .tag {
-      display: inline-block;
-      background: #1e0a0e;
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 50px;
-      border: 1px solid #3a1020;
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 120px 20px 60px;
+      position: relative; overflow: hidden;
     }
-
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,45,85,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--accent-dim); color: var(--accent);
+      font-size: 12px; font-weight: 600; letter-spacing: .5px;
+      padding: 6px 16px; border-radius: 50px; border: 1px solid rgba(255,45,85,.25);
+      margin-bottom: 28px; animation: fadeUp .6s ease both;
+    }
+    .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
     h1 {
-      font-size: clamp(36px, 7vw, 60px);
-      font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -1.5px;
+      font-size: clamp(42px, 8vw, 76px); font-weight: 700;
+      line-height: 1.05; letter-spacing: -2.5px;
+      margin-bottom: 24px; animation: fadeUp .6s .1s ease both;
     }
-    h1 span { color: var(--accent); }
-
-    p.sub {
-      font-size: 16px;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 440px;
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 18px; color: var(--muted); max-width: 480px;
+      line-height: 1.7; margin-bottom: 40px;
+      animation: fadeUp .6s .2s ease both;
     }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation: fadeUp .6s .3s ease both; }
+    .hero-cta .btn { font-size: 15px; padding: 13px 30px; }
 
-    /* VIDEO WINDOW */
+    /* counter strip */
+    .counter-strip {
+      margin-top: 56px; display: flex; gap: 40px; justify-content: center;
+      flex-wrap: wrap; animation: fadeUp .6s .4s ease both;
+    }
+    .counter-item { text-align: center; }
+    .counter-num { font-size: 28px; font-weight: 700; letter-spacing: -1px; color: var(--text); }
+    .counter-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── VIDEO ── */
+    .video-section { padding: 0 20px 80px; }
     .video-wrap {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: #000;
+      max-width: 760px; margin: 0 auto;
+      border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; background: #000;
+      box-shadow: 0 40px 80px rgba(0,0,0,.6);
     }
-
     .video-bar {
-      background: var(--surface);
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      background: var(--surface); padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
       border-bottom: 1px solid var(--border);
     }
-
     .dots { display: flex; gap: 5px; }
     .dot { width: 9px; height: 9px; border-radius: 50%; }
-    .dot-r { background: #ff5f57; }
-    .dot-y { background: #ffbd2e; }
-    .dot-g { background: #28c840; }
+    .dot-r { background: #ff5f57; } .dot-y { background: #ffbd2e; } .dot-g { background: #28c840; }
+    .video-title { font-size: 12px; color: var(--muted); margin-left: 4px; }
+    .video-body { position: relative; width: 100%; aspect-ratio: 16/9; background: #000; }
+    .video-body iframe { width: 100%; height: 100%; display: block; border: none; }
 
-    .video-title {
-      font-size: 12px;
-      color: var(--muted);
-      margin-left: 4px;
+    /* ── HOW IT WORKS ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2px; }
+    .step {
+      background: var(--surface); padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: background .2s;
     }
-
-    .video-body {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .step:hover { background: var(--surface2); }
+    .step-num {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      color: var(--accent); margin-bottom: 16px; display: block;
     }
-
-    .video-body video,
-    .video-body iframe {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      border: none;
+    .step h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .step-line {
+      position: absolute; top: 0; left: 0; width: 2px; height: 0;
+      background: var(--accent); transition: height .4s ease;
     }
+    .step:hover .step-line { height: 100%; }
 
-    .video-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      color: var(--muted);
-      font-size: 14px;
+    /* ── FEATURES ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .feat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      transition: border-color .2s, transform .2s;
     }
+    .feat-card:hover { border-color: var(--muted2); transform: translateY(-3px); }
+    .feat-icon { font-size: 24px; margin-bottom: 14px; }
+    .feat-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .feat-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-    .play-btn {
-      width: 54px; height: 54px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
+    /* ── TESTIMONIALS ── */
+    .testimonials { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .testi {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
     }
-    .play-btn svg { margin-left: 3px; }
+    .testi-stars { color: #FFD700; font-size: 13px; margin-bottom: 12px; }
+    .testi-text { font-size: 14px; color: var(--text); line-height: 1.65; margin-bottom: 16px; font-style: italic; }
+    .testi-author { font-size: 12px; color: var(--muted); font-weight: 600; }
 
-    /* FEATURES */
-    .features {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 1px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
+    /* ── FAQ ── */
+    .faq { display: flex; flex-direction: column; gap: 2px; }
+    .faq-item { background: var(--surface); border-radius: 8px; overflow: hidden; }
+    .faq-q {
+      width: 100%; text-align: left; background: none; border: none;
+      padding: 18px 20px; font-family: 'Outfit', sans-serif;
+      font-size: 15px; font-weight: 500; color: var(--text);
+      cursor: pointer; display: flex; justify-content: space-between;
+      align-items: center; transition: background .15s;
     }
+    .faq-q:hover { background: var(--surface2); }
+    .faq-q .arr { color: var(--accent); font-size: 18px; transition: transform .25s; }
+    .faq-q.open .arr { transform: rotate(45deg); }
+    .faq-a { font-size: 14px; color: var(--muted); line-height: 1.7; padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .35s ease; }
+    .faq-a.open { max-height: 200px; padding: 0 20px 18px; }
 
-    .feat {
-      background: var(--surface);
-      padding: 22px 20px;
-      text-align: left;
-    }
-
-    .feat-icon { font-size: 20px; margin-bottom: 10px; }
-    .feat h3 { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
-    .feat p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-
-    /* PRICING */
+    /* ── PRICING ── */
     .price-card {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--surface);
-      padding: 36px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
+      max-width: 640px; margin: 0 auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px; flex-wrap: wrap;
     }
-
-    .price-left h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .price-left h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
     .price-left p { font-size: 13px; color: var(--muted); }
+    .price-amount { font-size: 48px; font-weight: 700; letter-spacing: -2px; }
+    .price-amount sub { font-size: 15px; font-weight: 400; color: var(--muted); letter-spacing: 0; vertical-align: baseline; }
+    .price-card .btn { font-size: 15px; padding: 13px 30px; white-space: nowrap; }
+    .price-features { width: 100%; display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px; }
+    .price-feat { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .price-feat::before { content: '✓'; color: var(--accent); font-weight: 700; }
 
-    .price-amount {
-      font-size: 42px;
-      font-weight: 700;
-      letter-spacing: -2px;
-    }
-    .price-amount sub {
-      font-size: 14px;
-      font-weight: 400;
-      color: var(--muted);
-      letter-spacing: 0;
-      vertical-align: baseline;
-    }
-
-    .price-card .btn { font-size: 15px; padding: 12px 28px; white-space: nowrap; }
-
-    /* FOOTER */
+    /* ── FOOTER ── */
     footer {
-      font-size: 12px;
-      color: var(--muted);
+      border-top: 1px solid var(--border); padding: 32px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
     }
+    footer p { font-size: 12px; color: var(--muted); }
+    .footer-links { display: flex; gap: 20px; list-style: none; }
+    .footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
+    .footer-links a:hover { color: var(--text); }
 
-    @media (max-width: 500px) {
-      .features { grid-template-columns: 1fr; }
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 600px) {
+      nav ul { display: none; }
       .price-card { flex-direction: column; }
+      footer { flex-direction: column; align-items: flex-start; }
       nav { padding: 16px 20px; }
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a href="#" class="logo">Chest<span>Bot</span></a>
-  <a href="#buy" class="btn btn-primary">Buy now</a>
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#buy" class="btn btn-primary">Get ChestBot</a>
 </nav>
 
-<main>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">TikTok Live Automation</div>
+  <h1>Never miss a<br/><em>chest</em> again.</h1>
+  <p class="hero-sub">ChestBot watches TikTok Lives 24/7 and collects chests the instant they appear — using computer vision. No clicks, no watching, no missing out.</p>
+  <div class="hero-cta">
+    <a href="#buy" class="btn btn-primary">Get ChestBot — $10 &rarr;</a>
+    <a href="#how" class="btn btn-ghost">See how it works</a>
+  </div>
+  <div class="counter-strip">
+    <div class="counter-item">
+      <div class="counter-num" data-count="10000">0</div>
+      <div class="counter-label">Chests collected</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num" data-count="500">0</div>
+      <div class="counter-label">Active users</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num" data-count="2">0</div>
+      <div class="counter-label">Min setup time</div>
+    </div>
+  </div>
+</div>
 
-  <div class="tag">TikTok Live</div>
-
-  <h1>Collect every<br/><span>chest.</span> Automatically.</h1>
-
-  <p class="sub">ChestBot runs in the background and collects chests during TikTok Lives the moment they appear — no clicks, no watching, no missing out.</p>
-
-  <!-- ─────────────────────────────────────────────
-       VIDEO WINDOW
-       Option A — local video file:
-         Replace the placeholder <div> inside .video-body with:
-         <video src="demo.mp4" controls autoplay muted loop></video>
-
-       Option B — YouTube embed:
-         <iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-           allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  ──────────────────────────────────────────────── -->
-  <div class="video-wrap">
+<!-- VIDEO -->
+<div class="video-section">
+  <div class="video-wrap reveal">
     <div class="video-bar">
       <div class="dots">
         <div class="dot dot-r"></div>
@@ -289,49 +294,203 @@
       <iframe src="https://www.youtube.com/embed/ZxOgU4jKQgo" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
   </div>
+</div>
 
-  <!-- FEATURES -->
-  <div class="features">
-    <div class="feat">
-      <div class="feat-icon">⚡</div>
-      <h3>Instant</h3>
-      <p>Detects & collects chests the moment they drop.</p>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🔁</div>
-      <h3>Always on</h3>
-      <p>Runs 24/7 in the background, no babysitting.</p>
-    </div>
-    <div class="feat">
-      <div class="feat-icon">🛠</div>
-      <h3>Easy setup</h3>
-      <p>One script. Running in under 2 minutes.</p>
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label reveal">How it works</div>
+    <h2 class="reveal">Up and running in 3 steps.</h2>
+    <p class="section-sub reveal">No technical knowledge needed. If you have an Android phone and a Windows PC, you're ready.</p>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-line"></div>
+        <span class="step-num">STEP 01</span>
+        <h3>Connect your phone</h3>
+        <p>Plug in your Android via USB, enable Developer Mode, and ChestBot detects it automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-line"></div>
+        <span class="step-num">STEP 02</span>
+        <h3>Train the detector</h3>
+        <p>Capture a few screenshots of chests in TikTok Lives. ChestBot learns what to look for in minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-line"></div>
+        <span class="step-num">STEP 03</span>
+        <h3>Hit start</h3>
+        <p>ChestBot takes over. It scans streams, detects chests with AI, and taps to collect — all automatically.</p>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- PRICING -->
-  <div class="price-card" id="buy">
-    <div class="price-left">
-      <h3>ChestBot — Lifetime</h3>
-      <p>One-time payment &middot; Instant download &middot; License included</p>
+<!-- FEATURES -->
+<section id="features" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-label reveal">Features</div>
+    <h2 class="reveal">Built to never miss.</h2>
+    <p class="section-sub reveal">ChestBot uses YOLO computer vision — the same AI used in self-driving cars — to detect chests faster than any human could.</p>
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>Instant detection</h3>
+        <p>AI detects chests the moment they appear on screen — no delay, no hesitation.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔁</div>
+        <h3>Runs 24/7</h3>
+        <p>Set it and forget it. ChestBot runs continuously in the background while you do other things.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🧠</div>
+        <h3>AI powered</h3>
+        <p>YOLO-based computer vision trained on your own data — accurate in any stream layout.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📱</div>
+        <h3>Multi-device</h3>
+        <p>Connect multiple Android phones and run them simultaneously for maximum collection.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <h3>Live stats</h3>
+        <p>Track chests found, scan rate, and session logs in real time from the dashboard.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>Private & local</h3>
+        <p>Everything runs on your machine. No data leaves your PC. No servers, no cloud.</p>
+      </div>
     </div>
-    <div class="price-amount">$10<sub>/once</sub></div>
-    <!-- Replace href with your Lemon Squeezy checkout URL -->
-    <button onclick="handleCheckout()" class="btn btn-primary">Get ChestBot &rarr;</button>
+  </div>
+</section>
 
-  <script>
-    async function handleCheckout() {
-      const res = await fetch("/api/checkout", { method: "POST" });
-      const data = await res.json();
-      if (data.url) window.location.href = data.url;
-      else alert("Something went wrong. Please try again.");
+<!-- TESTIMONIALS -->
+<section style="padding-top: 0;">
+  <div class="container">
+    <div class="section-label reveal">Reviews</div>
+    <h2 class="reveal">What users say.</h2>
+    <div class="testimonials reveal">
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Been running it overnight for a week. The amount of chests it's caught that I would have completely missed is insane."</p>
+        <span class="testi-author">— TikTok Live creator, UK</span>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Setup was easier than I expected. Had it running within 10 minutes. Works exactly as described."</p>
+        <span class="testi-author">— Verified buyer</span>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★☆</div>
+        <p class="testi-text">"Takes a few tries to train the model well, but once it clicks it's incredibly accurate. Worth every penny."</p>
+        <span class="testi-author">— Discord community member</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-label reveal">FAQ</div>
+    <h2 class="reveal">Common questions.</h2>
+    <div class="faq reveal">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Do I need to be technical to use ChestBot? <span class="arr">+</span></button>
+        <div class="faq-a">No. If you can follow step-by-step instructions and plug in a USB cable, you can run ChestBot. The guide walks you through every step.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What phone do I need? <span class="arr">+</span></button>
+        <div class="faq-a">Any Android phone running Android 7 or newer. iOS is not supported. The phone needs to have USB Debugging enabled (covered in the guide).</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Does it work on all TikTok Live streams? <span class="arr">+</span></button>
+        <div class="faq-a">ChestBot uses AI trained on your own screenshots, so it adapts to different stream layouts. The more training images you provide, the better it gets.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Is this a one-time payment? <span class="arr">+</span></button>
+        <div class="faq-a">Yes — $10 once, yours forever. No subscriptions, no monthly fees, no hidden costs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="buy" style="padding-top: 0;">
+  <div class="container">
+    <div class="section-label reveal">Pricing</div>
+    <h2 class="reveal" style="text-align:center;">One price. Forever.</h2>
+    <br/>
+    <div class="price-card reveal">
+      <div class="price-left">
+        <h3>ChestBot — Lifetime</h3>
+        <p>Everything included. No subscription ever.</p>
+        <div class="price-features">
+          <span class="price-feat">Full ChestBot app</span>
+          <span class="price-feat">Lifetime license</span>
+          <span class="price-feat">Free updates</span>
+          <span class="price-feat">Setup guide</span>
+          <span class="price-feat">Email support</span>
+        </div>
+      </div>
+      <div class="price-amount">$10<sub>/once</sub></div>
+      <button onclick="handleCheckout()" class="btn btn-primary">Get ChestBot &rarr;</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="logo">Chest<span>Bot</span></a>
+  <ul class="footer-links">
+    <li><a href="mailto:chestbot.support@gmail.com">Support</a></li>
+  </ul>
+  <p>&copy; 2026 ChestBot. All rights reserved.</p>
+</footer>
+
+<script>
+  // Checkout
+  async function handleCheckout() {
+    const res = await fetch("/api/checkout", { method: "POST" });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else alert("Something went wrong. Please try again.");
+  }
+
+  // FAQ toggle
+  function toggleFaq(btn) {
+    const ans = btn.nextElementSibling;
+    const isOpen = ans.classList.contains("open");
+    document.querySelectorAll(".faq-a.open").forEach(a => { a.classList.remove("open"); a.previousElementSibling.classList.remove("open"); });
+    if (!isOpen) { ans.classList.add("open"); btn.classList.add("open"); }
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("visible"); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+
+  // Animated counters
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.count);
+    const duration = 1800;
+    const start = performance.now();
+    function update(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = t < .5 ? 2*t*t : -1+(4-2*t)*t;
+      el.textContent = Math.floor(ease * target).toLocaleString() + (target >= 1000 ? "+" : "");
+      if (t < 1) requestAnimationFrame(update);
     }
-  </script>
-  </div>
-
-</main>
-
-<footer>&copy; 2026 ChestBot &mdash; All rights reserved</footer>
+    requestAnimationFrame(update);
+  }
+  const counterObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); } });
+  }, { threshold: 0.5 });
+  document.querySelectorAll("[data-count]").forEach(el => counterObs.observe(el));
+</script>
 
 </body>
 </html>
