@@ -3,40 +3,31 @@
 ╚══════════════════════════════════════════╝
 
 REQUIREMENTS
-  • Windows PC
-  • Python 3.10 or newer  →  https://python.org
-  • Android phone with USB Debugging enabled
-  • TikTok installed on the phone
+  • Windows PC (64-bit)
+  • Android phone with USB Debugging enabled (or Android Emulator)
+  • TikTok installed on the device
 
 ──────────────────────────────────────────
 
-STEP 1 — Install dependencies
-  Open a terminal in this folder and run:
+STEP 1 — Enable USB Debugging on your phone
+  1. Open phone Settings → About Phone → tap "Build Number" 7 times.
+  2. Go to Developer Options → turn ON "USB Debugging".
+  3. Connect phone to PC via USB and tap "Always Allow" when prompted.
 
-      pip install -r requirements.txt
+STEP 2 — Run ChestBot
+  Double-click `ChestBot.exe` to launch the application instantly.
+  No Python installation or setup required!
 
-STEP 2 — Enable USB Debugging on your phone
-  Settings → About phone → tap Build number 7×
-  Settings → Developer options → USB Debugging ON
-  Connect phone via USB and tap "Allow" when prompted.
-
-STEP 3 — Run ChestBot
-  Double-click chestbot.py  OR  run in terminal:
-
-      python chestbot.py
-
-  On first launch you will be asked for your license key.
-  This is in your purchase confirmation email.
-
-STEP 4 — Collect training data & train
-  See the Guide tab inside the app for full instructions.
+STEP 3 — Connect & Collect
+  • Navigate to the "Device Settings" tab inside ChestBot to connect your phone.
+  • Go to "Run Dashboard" to start automatic chest collection.
+  • Check the "User Guide" tab inside the app for detailed workflows.
 
 ──────────────────────────────────────────
 
 SUPPORT
-  Having trouble? Contact us at: [your support email]
-  Include your license key and a description of the issue.
+  Need help? Contact support at: support@getchestbot.com
 
 ──────────────────────────────────────────
-© 2026 ChestBot. For personal use only.
+© 2026 ChestBot PRO. All rights reserved.
 Do not share, resell, or redistribute this software.
